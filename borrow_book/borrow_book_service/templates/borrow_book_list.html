@@ -1,0 +1,57 @@
+<!-- templates/return_book_list.html -->
+{% load static %}
+{% load return_book_service %}
+<table>
+    <thead>
+      <tr>
+        <th>Mã phiếu trả</th>
+        <th>Họ và tên KH</th>
+        <th>Mã sách</th>
+        <th>Trạng thái</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for return_book in return_books %}
+        <tr>
+          <td>{{ return_book.idborrow }}</td>
+          <td>{{ return_book.name_cust }}</td>
+          <td>{{ return_book.idbook.idbook }}</td>
+          <td>{{ return_book.status }}</td>
+          <td>
+            {% if return_book.status == "chưa trả" %}
+              <button onclick="returnBook({{ return_book.idborrow }}, {{ return_book.idbook.idbook }}, {{ return_book.quantity }})">Trả sách</button>
+            {% else %}
+              <button onclick="viewReturn({{ return_book.id }})">Xem phiếu trả</button>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function returnBook(borrowId, bookId, quantity) {
+        fetch(`/book_service/update_book_quantity/${bookId}/${quantity}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+    
+    function viewReturn(returnId) {
+        window.location.href = `/return_book_service/return_details/${returnId}/`;  // Thay đổi endpoint thành đúng endpoint trong app return_book_service
+    }
+</script>

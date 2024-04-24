@@ -1,0 +1,6 @@
+<!-- templates/return_book_list.html -->
+{% for return_book in return_books %}
+    <h2>{{ return_book.borrow.name_cust }}</h2>
+    <p>{{ return_book.borrow.idbook.title }}</p>
+    <p>{{ return_book.total_money }}</p>
+{% endfor %}
